@@ -156,6 +156,7 @@ def convert_driver_dict(drivers):
     return driver_dict
 
 
+
 def post_fleet_trips(access_token,groupId,vehicleId,startMs,endMs):
     
     trips_url = '/fleet/trips'
@@ -174,6 +175,7 @@ def post_fleet_trips(access_token,groupId,vehicleId,startMs,endMs):
     response = requests.post(base_url+trips_url,params=parameters, data=json.dumps(request_body))
     
     return json.loads(response.text)
+
 
 
 def add_trips(vehicle_obj_list,access_token,groupId,startMs,endMs):
@@ -198,6 +200,7 @@ def ms_to_datetime(timestamp_ms):
     date_time = datetime.datetime.fromtimestamp(timestamp)
 
     return date_time    
+
 
 
 def create_payroll_trips_csv(fleet_list,driver_dict,name_csv='payroll_trips.csv'):
