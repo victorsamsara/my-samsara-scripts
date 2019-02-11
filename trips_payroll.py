@@ -3,6 +3,47 @@ import requests
 import datetime
 import csv
 
+"""
+
+This script computes hours between first trip and last trip of the day for payroll purposes. It produces a CSV file
+with the following fields:
+
+| Date | Vehicle Name | Driver | Start Time | Start Location | End Time | End Location | Total Duty Hours |
+
+
+Use Case: Some companies that are tachograph or HoS exempt pay their drivers based on "duty hours" on a specific day. They would simply run a report to compute
+how many hours a particular driver spent working on a daily basis. This figure can be computed by capturing when a vehicle first went on a trip, and when the last trip
+of the day ended.
+
+
+API Endpoints used:
+
+/fleet/list
+
+/fleet/drivers
+
+/fleet/trips
+
+
+Conditions: Fleet manager must have drivers statically assigned to vehicles on Samsara dashboard for "Driver" column to be populated in CSV file. Otherwise, 
+the customer must map vehicle name to drivers after producing the file. 
+
+
+Script flow:
+
+1) Ask user for a date
+2) Get vehicle list, build list of vehicle objects
+3) Get drivers, build dictionary with "vehicle id" and "driver name" as key-value pairs for easier parsing
+4) Pull trips for each vehicle for a 24-hour period on the date specified by the user, discard vehicles with empty trips.
+5) Add trips to vehicle objects
+6) Calculate total duty hours by subtracting end of last trip minus begining of first trip
+7) Ask user for CSV file name, and output file.
+
+
+"""
+
+
+
 
 base_url = 'https://api.samsara.com/v1'
 
