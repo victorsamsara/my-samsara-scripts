@@ -1,0 +1,5 @@
+startMs,endMs,startLocation,endLocation,distanceMeters,fuelConsumedMl
+2019-01-18 01:25:26.019000,2019-01-18 01:32:28.003000,"Rhode Island Street, San Francisco, CA","Harrison Street, San Francisco, CA",1528,617
+2019-01-18 03:42:03.997000,2019-01-18 04:06:03.999000,"Harrison Street, San Francisco, CA","Lincoln Avenue, Oakland, CA",23297,1217
+2019-01-18 15:11:15.072000,2019-01-18 15:36:00.010000,"Lincoln Avenue, Oakland, CA","Rhode Island Street, San Francisco, CA",22288,2242
+2019-01-18 23:34:29.980000,2019-01-19 00:21:51.912000,"Rhode Island Street, San Francisco, CA","Lincoln Avenue, Oakland, CA",27010,1894

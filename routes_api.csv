@@ -1,0 +1,8 @@
+﻿Dispatch Jobs,,,
+destination_name,scheduled_arrival_time_ms,,
+Heathrow Airport,1545681600000,,
+O2 Arena,1545768000000,,
+,,,
+Route Details,,,
+name,scheduled_start_ms,scheduled_end_ms,start_location_address
+December Route,1545652800000,1545825600000,E3 3GW

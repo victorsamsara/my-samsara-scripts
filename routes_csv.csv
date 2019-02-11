@@ -1,0 +1,6 @@
+﻿dispatch_jobs,,,,,,,,,,,,
+scheduled_arrival_time_ms, scheduled_departure_time_ms,notes,destination_name, destination_address_id,destination_lat, destination_lng,,,,,,
+,,Samsara,415,,37.76433,-122.402724,,,,,,
+request_body,,,,,,,,,,,,
+vehicle_id,driver_id,actual_start_ms,actual_end_ms,scheduled_start_ms, scheduled_end_ms,name,group_id,start_location_name, start_location_address,start_location_address_id,start_location_lat,start_location_lng
+,,,,1545313323000,1545658923000,Samsara,,Home,"London, E3 3GW",,,
