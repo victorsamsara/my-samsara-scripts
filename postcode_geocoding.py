@@ -2,6 +2,15 @@ import requests
 import json
 import csv
 
+"""
+
+This script reads a CSV file with raw addresses and postcodes and prints out another CSV file with the latitude and longitude coordinates for each address and postcode
+using the free geocoding service at https://api.postcodes.io/
+
+The above service only works for UK based addresses, however, the script below could be easily adapted to any geocoding service.
+
+"""
+
 url = "https://api.postcodes.io/postcodes"
 
 
