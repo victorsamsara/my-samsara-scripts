@@ -7,18 +7,19 @@ from twilio.rest import Client
 
 The following script provides a mechanism to send an SMS alert if a fuel level anomaly is detected with any of the vehicles.
 
-A fuel level anomaly consists of an abrupt drop in fuel level percent in a short period of time, which could translate to fuel theft.
+A fuel level anomaly consists of a big drop in fuel level percent in a short period of time, which could be due to fuel theft.
 If fuel is being exctracted from the vehicle's tank, we should expect to see a considerable decrease in the fuel level percent.
 
 The logic of the script is simple. It uses two main parameters that are tunable by the end user:
 
-    1. fuelLevelPercent_threshold: a value between 0.0 and 1.0 that indicates the threshold that we want to alert at. This is not the fuel level
-                                   but the delta in existing fuel level versus previously recorded fuel level.
+    1. fuelLevelPercent_threshold: a value between 0.0 and 1.0 that indicates the threshold that we want to alert at. 
+    This is not the fuel level but the delta in existing fuel level versus previously recorded fuel level.
 
     2. time_threshold: the intervals at which we want to measure fuel level percent.
 
-For example, fuelLevelPercent_threshold of 0.2 and time_threshold of 600 seocond (or 10 minutes) means that if the fuel level percent changes
-by 0.2 (current fuel value - previous fuel value) within 10 minutes (which is the interval between API calls) then this will trigger the SMS alert.
+For example, fuelLevelPercent_threshold of 0.2 and time_threshold of 600 seocond (or 10 minutes) means that if the fuel level 
+percent changes by 0.2 (current fuel value - previous fuel value) within 10 minutes (which is the interval between API calls),
+then this will trigger the SMS alert.
 
 
 API Endpoints used:
@@ -26,7 +27,7 @@ API Endpoints used:
 /fleet/list
 
 
-Special note: this script uses Twilio as the SMS message provider. You can create a trial account here: https://www.twilio.com/try-twilio  
+Special note: this script uses Twilio as the SMS message provider. Free trial account here: https://www.twilio.com/try-twilio  
 You will also have to install the Twilio package -> pip install twilio
 
 """
