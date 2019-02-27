@@ -47,7 +47,7 @@ def post_fleet_list(access_token,groupId,startingAfter=None,endingBefore=None,li
 
 	response_codes(response.status_code)
 
-	return resonse.json()['vehicles']
+	return response.json()['vehicles']
 
 #Sample run
 vehicles = post_fleet_list(access_token,groupId)
