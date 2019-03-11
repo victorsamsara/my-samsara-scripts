@@ -20,10 +20,10 @@ def response_codes(status_code):
     if status_code >= 200 and status_code < 299:
     	#Do nothing, API call was successful
     	pass
-	elif status_code == 400:
-		raise ValueError('Bad Request: Please make sure the request follows the format specified in the documentation.')
+    elif status_code == 400:
+    	raise ValueError('Bad Request: Please make sure the request follows the format specified in the documentation.')
 	elif status_code == 401:
-		raise ValueError('Invalid Toke: Could not authenticate successfully')
+		raise ValueError('Invalid Token: Could not authenticate successfully')
 	elif status_code == 404:
 		raise ValueError('Page not found: API Endpoint is invalid')
 	else:
