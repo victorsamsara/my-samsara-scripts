@@ -25,10 +25,10 @@ def response_codes(status_code):
     elif status_code == 401:
     	raise ValueError('Invalid Token: Could not authenticate successfully')
     elif status_code == 404:
-		raise ValueError('Page not found: API Endpoint is invalid')
-	else:
-		print(status_code)
-		raise ValueError('Request was not successful')
+    	raise ValueError('Page not found: API Endpoint is invalid')
+    else:
+    	print(status_code)
+    	raise ValueError('Request was not successful')
 
 
 def post_fleet_list(access_token,groupId,startingAfter=None,endingBefore=None,limit=None):
