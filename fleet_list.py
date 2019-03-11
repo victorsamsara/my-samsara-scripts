@@ -22,9 +22,9 @@ def response_codes(status_code):
     	pass
     elif status_code == 400:
     	raise ValueError('Bad Request: Please make sure the request follows the format specified in the documentation.')
-	elif status_code == 401:
-		raise ValueError('Invalid Token: Could not authenticate successfully')
-	elif status_code == 404:
+    elif status_code == 401:
+    	raise ValueError('Invalid Token: Could not authenticate successfully')
+    elif status_code == 404:
 		raise ValueError('Page not found: API Endpoint is invalid')
 	else:
 		print(status_code)
