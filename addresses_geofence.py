@@ -222,13 +222,12 @@ def post_addresses(access_token,address_array):
     
     response = requests.post(base_url+addresses_url,params=access_token,json=request_body)
 
-    response_codes(response.status_code)
-
     if response.status_code == 200:
         print('Successful geofence upload: '+ address_array[0]['name'])
     else:
         print('Failed geofence upload: '+ address_array[0]['name'])
         print(response.text)
+        response_codes(response.status_code)
 
     return response.json()
 
