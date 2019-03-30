@@ -17,9 +17,11 @@ Use Case: when migrating from 3rd party systems to Samsara, customers with custo
 need to import them into Samsara. These 3rd party systems generally allow to export the geofences in CSV format, which
 could be easily formatted to use this scripts for automated upload.
 
+
 API Endpoints used:
 
 /addresses
+
 
 Conditions: For formatting purposes, the CSV must contain the formattedAddress field, which includes the address as it might be recognized by maps.google.com.
 The formattedAddress does not need to match the latitudes and longitudes, as long as the coordinates are in the same geographic location. You could use something
@@ -79,7 +81,7 @@ def create_addresses_list(addresses_csv):
             
     return addresses_list
     
-    
+
     
 def build_address_array(addresses_list):
     
@@ -100,7 +102,7 @@ def build_address_array(addresses_list):
     address_dict['name'] = item['name']
     address_dict['formattedAddress'] = item['formattedAddress']
         
-    #Discard empty vertices
+    #Only append vertices with values, discard empty ones.
     if item['lat1'] != '' and item['lon1'] != '':
         vertices_list.append({'latitude':float(item['lat1']),'longitude':float(item['lon1'])})
     
