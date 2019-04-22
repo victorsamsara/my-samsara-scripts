@@ -32,7 +32,9 @@ def responseCodes(response):
 
 def getFleetTrips(access_token,groupId,vehicleId,startMs,endMs):
 
-	#This function returns the vehicles dictionary in the fleet list
+	"""
+	This function returns the vehicles dictionary in the fleet list
+	"""
 	
 	fleetListUrl = '/fleet/trips'
 	parameters = {
@@ -48,7 +50,6 @@ def getFleetTrips(access_token,groupId,vehicleId,startMs,endMs):
 
 	return response.json()['trips']
 
-#Sample run
-print(getFleetTrips('mdRI3GLBydOLJYXos5TOp7PYdCHRAe',24131,212014918454264,1551892283000,1554570683000))
+
 
 

@@ -5,8 +5,8 @@ import requests
 Add your API Token and groupId below
 
 """
-access_token = 'mdRI3GLBydOLJYXos5TOp7PYdCHRAe'
-groupId = 24131
+access_token = 'yourAPIToken'
+groupId = 12345
 baseUrl = 'https://api.samsara.com/v1'
 
 def responseCodes(response):
@@ -31,9 +31,10 @@ def responseCodes(response):
 		raise ValueError('Request was not successful')
 
 
+
 def getFleetList(access_token,groupId,startingAfter=None,endingBefore=None,limit=None):
 
-	#This function returns the vehicles dictionary in the fleet list
+	#This function returns the vehicles array in the fleet list JSON 
 	
 	fleetListUrl = '/fleet/list'
 	parameters = {
