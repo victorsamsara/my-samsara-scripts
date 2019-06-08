@@ -210,7 +210,7 @@ def createDutyHours(fleetList,nameCSV='duty_hours.csv'):
             else:
                 writeTrips.writerow({'Input Date':startDt.day+'/'+startDt.month+'/'+startDt.year,
                     'Vehicle Name':vehicle.name,
-                    'Frist Trip Start Time': str(msToDatetime(vehicle.first['startMs']).hour)+':'+str(msToDatetime(vehicle.first['startMs']).minute),
+                    'First Trip Start Time': str(msToDatetime(vehicle.first['startMs']).hour)+':'+str(msToDatetime(vehicle.first['startMs']).minute),
                     'Start Location':vehicle.first['startLocation'],
                     'Last Trip End Time':str(msToDatetime(vehicle.last['endMs']).hour)+':'+str(msToDatetime(vehicle.last['endMs']).minute),
                     'End Location':vehicle.last['endLocation'],
