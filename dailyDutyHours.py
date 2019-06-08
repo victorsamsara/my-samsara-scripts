@@ -5,49 +5,43 @@ import csv
 
 """
 
-This script computes hours between first trip and last trip of the day for payroll purposes. It produces a CSV file
+This script computes hours between first trip and last trip of the day for hours of duty purposes, including end of 24-hour shift. It produces a CSV file
 with the following fields:
 
-| Date | Vehicle Name | Driver | Start Time | Start Location | End Time | End Location | Total Duty Hours |
+| Input Date | Vehicle Name | Start Time | Start Location | End Time | End Location | Total Duty Hours | End of 24-hour Cycle |
 
 
-Use Case: Some companies that are tachograph or HoS exempt pay their drivers based on "duty hours" on a specific day. They would simply run a report to compute
-how many hours a particular driver spent working on a daily basis. This figure can be computed by capturing when a vehicle first went on a trip, and when the last trip
-of the day ended.
+Use Case: Some companies that are tachograph or HoS exempt pay their drivers based on "duty hours" on a specific day or 24-hour cycle. 
+They would simply run a report to compute how many hours a particular vehicle spent working on a daily basis. This figure can be computed by 
+capturing when a vehicle first went on a trip, and when the last trip of the 24-hour cycle ended.
 
 
 API Endpoints used:
 
 /fleet/list
 
-/fleet/drivers
-
 /fleet/trips
-
-
-Conditions: Fleet manager must have drivers statically assigned to vehicles on Samsara dashboard for "Driver" column to be populated in CSV file. Otherwise, 
-the customer must map vehicle name to drivers after producing the file. 
 
 
 Script flow:
 
-1) Ask user for a date
+1) Ask user for an input date
 2) Get vehicle list, build list of vehicle objects
-3) Get drivers, build dictionary with "vehicle id" and "driver name" as key-value pairs for easier parsing
 4) Pull trips for each vehicle for a 24-hour period on the date specified by the user, discard vehicles with empty trips.
 5) Add trips to vehicle objects
 6) Calculate total duty hours by subtracting end of last trip minus begining of first trip
+7) Compute end of shift by adding 24 hours to the start time of the first trip
 7) Ask user for CSV file name, and output file.
+
+
+Considerations: at the moment this script only produces vehicle-specific results, not driver-based.
 
 
 """
 
 
-
-
 baseUrl = 'https://api.samsara.com/v1'
-
-access_token = {'mytoken'}
+access_token = 'mytoken'
 groupId = 12345
 
 
@@ -74,15 +68,16 @@ def responseCodes(response):
 
 
 
-class vehicle_obj():
+class vehicleObj():
     
-    def __init__(self,_id,name,trips = None,first=None,last=None,deltaHours=None):
+    def __init__(self,_id,name,trips = None,first=None,last=None,endShiftMs=None,deltaHours=None):
         
         self._id = _id
         self.name = name
         self.trips = trips
         self.first = first
         self.last = last
+        self.endShiftMs = endShiftMs
         self.deltaHours = deltaHours
         
     def calculations(self):
@@ -97,7 +92,7 @@ class vehicle_obj():
             self.deltaHours = (self.last['endMs'] - self.first['startMs'])/3600000
             self.deltaHours = round(self.deltaHours,2)
 
-                
+
 
 class datetimeObj():
     
@@ -121,7 +116,7 @@ class datetimeObj():
         return str(self.year)+'/'+str(self.month)+'/'+str(self.day)+' '+str(self.hour)+':'+str(self.minute)
 
 
-        
+
 def getFleetList(access_token,groupId,startingAfter=None,endingBefore=None,limit=None):
 
     #This function returns the vehicles array in the fleet list JSON 
@@ -142,39 +137,14 @@ def getFleetList(access_token,groupId,startingAfter=None,endingBefore=None,limit
 
 
 
-def getFleetDrivers(access_token,groupId):
-
-    #Return the driver list in dictionary form
-
-    fleetDriversUrl = '/fleet/drivers'
-    parameters = {"access_token":access_token}
-    response = requests.get(baseUrl+fleetDriversUrl,params=parameters)
-
-    return response.json()['drivers']
-
-
-
 def vehicleList(fleetList):
     
     #Return a list of vehicle objects
     
-    #Build list of vehicle_obj
-    vehicleObjList = [ vehicle_obj(vehicles['id'],vehicles['name']) for vehicles in fleetList ]
+    #Build list of vehicleObj
+    vehicleObjList = [ vehicleObj(vehicles['id'],vehicles['name']) for vehicles in fleetList ]
     
     return vehicleObjList
-
-
-
-def convertDriverDict(drivers):
-
-    #Return a dictionary of 'vehicle id' mapped to driver 'name'
-
-    driverDict = dict()
-
-    for driver in drivers:
-        driverDict[str(driver['vehicleId'])] = driver['name']
-
-    return driverDict
 
 
 
@@ -201,59 +171,54 @@ def addTrips(vehicleObjList,access_token,groupId,startMs,endMs):
     #Add trips to the vehicle object "trips" attribute
     for vehicle in vehicleObjList:
         
-        #Populate trips for each object
+        #Compute endShiftMs (firstTripStartMs + 24 hours in epochMs) and store in vehicleObj
+        firstTripStartMs = getFleetTrips(access_token,groupId,vehicle._id,startMs,endMs)[0]['startMs']
+        vehicle.endShiftMs = firstTripStartMs + 86400000
+
+        #Populate trips for each object, endShiftMs is 24 hours after first trip
         vehicle.trips = getFleetTrips(access_token,groupId,vehicle._id,startMs,endMs)
         
-        #Run calculations function withi vehicle_obj
+        #Run calculations function within vehicleObj
         vehicle.calculations()
     print('Pulling trips: complete!')
 
     
     
         
-def msToDatetime(timestamp_ms):
+def msToDatetime(timestampMs):
     
-    timestamp = timestamp_ms/1000
+    timestamp = timestampMs/1000
     dateTime = datetime.datetime.fromtimestamp(timestamp)
 
     return dateTime    
 
 
 
-def createPayrollTrips(fleetList,driverDict,nameCSV
-='payroll_trips.csv'):
+def createDutyHours(fleetList,nameCSV='duty_hours.csv'):
 
-    #Create CSV for payroll trips
+    #Create CSV for Duty Hours trips
 
-    with open(nameCSV,'a') as payrollTrips:
-        csvFields = ['Date','Vehicle Name','Driver','Start Time','Start Location','End Time','End Location','Total Duty Hours']
-        writeTrips = csv.DictWriter(payrollTrips,fieldnames=csvFields)
+    with open(nameCSV,'a') as dutyHours:
+        csvFields = ['Input Date','Vehicle Name','First Trip Start Time','Start Location','Last Trip End Time','End Location','Total Duty Hours','End of 24-hour Cycle']
+        writeTrips = csv.DictWriter(dutyHours,fieldnames=csvFields)
         writeTrips.writeheader()
+        print('Creating CSV file: running...')
         for vehicle in fleetList:
             #Discard vehicles with no trips
             if len(vehicle.trips) < 1:
                 pass
             else:
-                #check if vehicle id has statically assigned driver
-                if str(vehicle._id) in driverDict.keys():
-                    writeTrips.writerow({'Date':startDt.day+'/'+startDt.month+'/'+startDt.year,
-                        'Vehicle Name':vehicle.name,
-                        'Driver': driverDict[str(vehicle._id)],
-                        'Start Time': str(msToDatetime(vehicle.first['startMs']).hour)+':'+str(msToDatetime(vehicle.first['startMs']).minute),
-                        'Start Location':vehicle.first['startLocation'],
-                        'End Time':str(msToDatetime(vehicle.last['endMs']).hour)+':'+str(msToDatetime(vehicle.last['endMs']).minute),
-                        'End Location':vehicle.last['endLocation'],
-                        'Total Duty Hours':vehicle.deltaHours})
-                else:
-                    writeTrips.writerow({'Date':startDt.day+'/'+startDt.month+'/'+startDt.year,
-                        'Vehicle Name':vehicle.name,
-                        'Driver': 'No driver statically assigned',
-                        'Start Time': str(msToDatetime(vehicle.first['startMs']).hour)+':'+str(msToDatetime(vehicle.first['startMs']).minute),
-                        'Start Location':vehicle.first['startLocation'],
-                        'End Time':str(msToDatetime(vehicle.last['endMs']).hour)+':'+str(msToDatetime(vehicle.last['endMs']).minute),
-                        'End Location':vehicle.last['endLocation'],
-                        'Total Duty Hours':vehicle.deltaHours})
-
+                writeTrips.writerow({'Input Date':startDt.day+'/'+startDt.month+'/'+startDt.year,
+                    'Vehicle Name':vehicle.name,
+                    'Frist Trip Start Time': str(msToDatetime(vehicle.first['startMs']).hour)+':'+str(msToDatetime(vehicle.first['startMs']).minute),
+                    'Start Location':vehicle.first['startLocation'],
+                    'Last Trip End Time':str(msToDatetime(vehicle.last['endMs']).hour)+':'+str(msToDatetime(vehicle.last['endMs']).minute),
+                    'End Location':vehicle.last['endLocation'],
+                    'Total Duty Hours':vehicle.deltaHours,
+                    'End of 24-hour Cycle':str(msToDatetime(vehicle.endShiftMs).day)+'/'+str(msToDatetime(vehicle.endShiftMs).month)+
+                    '/'+str(msToDatetime(vehicle.endShiftMs).year)+' '+str(msToDatetime(vehicle.endShiftMs).hour)+
+                    ':'+str(msToDatetime(vehicle.endShiftMs).minute)})
+        print('Creating CSV file: complete!')
 
 
 #MAIN
@@ -275,16 +240,12 @@ endDt.computeEpochMs()
 #Get list of vehicles and convert to objects
 fleetList = vehicleList(getFleetList(access_token,groupId))
 
-#Get list of drivers and convert to dictionary
-drivers = getFleetDrivers(access_token,groupId)
-driverDict = convertDriverDict(drivers)
-
 #Add trips to each vehicle object and compute first/last trip and hours in between
 addTrips(fleetList,access_token,groupId,startDt.epochMs,endDt.epochMs)
 
 #Output CSV
 nameCSV = input('Provide CSV name in format "name.csv" : ')
-createPayrollTrips(fleetList,driverDict,nameCSV)
+createDutyHours(fleetList,nameCSV)
 
 
 
