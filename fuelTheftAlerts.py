@@ -93,7 +93,7 @@ class vehicleObj():
         if self.previousFuelLevelPercent < fuelPercentThreshold:
             #Do nothing if previousFuelLevelPercent is already below threshold (i.e. fuel level is already low)
             pass
-        else if (self.previousFuelLevelPercent-self.currentFuelLevelPercent) > fuelPercentThreshold:
+        elif (self.previousFuelLevelPercent-self.currentFuelLevelPercent) > fuelPercentThreshold:
             body = 'Fuel Level for vehicle '+self.name+' has decreased by '+str(fuelPercentThreshold*100)+'%\n in the last '+str(int(timeThresholdSec/60))+' minutes.'
             twilio_message(toNum,fromNum,body)  
         else:
