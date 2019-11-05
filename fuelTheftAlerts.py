@@ -130,7 +130,6 @@ def getFleetList(access_token,groupId,startingAfter=None,endingBefore=None,limit
     
 def vehicleList(fleetList):
     
-    
     #Build list of vehicleObj
     vehicleObj_list = [ vehicleObj(vehicles['id'],vehicles['name'],vehicles['fuelLevelPercent']) for vehicles in fleetList ]
     
