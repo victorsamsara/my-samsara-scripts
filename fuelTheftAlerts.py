@@ -130,14 +130,11 @@ def getFleetList(access_token,groupId,startingAfter=None,endingBefore=None,limit
     
 def vehicleList(fleetList):
     
-    #Return a list of vehicle objects
-    
-    #Grab vehicle list only, disregards other keys
-    fleetList = fleetList['vehicles']
     
     #Build list of vehicleObj
     vehicleObj_list = [ vehicleObj(vehicles['id'],vehicles['name'],vehicles['fuelLevelPercent']) for vehicles in fleetList ]
     
+    #Return a list of vehicle objects
     return vehicleObj_list
 
 
