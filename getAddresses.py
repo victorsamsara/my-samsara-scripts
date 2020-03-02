@@ -46,7 +46,6 @@ def responseCodes(response):
 def getAddresses(access_token,_id=None):
 
 	#This function returns the addresses array or a particular address if id is provided
-	
 
     if _id == None:
         getAddressesURL = '/addresses'
